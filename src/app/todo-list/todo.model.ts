@@ -3,7 +3,7 @@ export class Todo {
     IsComplete: boolean = false;
     EditMode: boolean = false;
 
-    get done(): Boolean{
+    get getCompleteResult(): Boolean{
         return this.IsComplete;        
     }
 

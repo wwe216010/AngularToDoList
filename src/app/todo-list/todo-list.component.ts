@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { TodoListService } from './todo-list.service'
 import { Todo } from './todo.model';
+import { TodoStatusType } from './todo-status-type.enum'
 
 @Component({
   selector: 'app-todo-list',
@@ -9,7 +10,8 @@ import { Todo } from './todo.model';
 })
 export class TodoListComponent implements OnInit {
 
-  //todo = ""; //for ngModel雙向綁定
+  todoStatus = TodoStatusType;//for Template綁定
+  private status = TodoStatusType.All;
 
   constructor(private _serviceTodoList: TodoListService) { }
 
@@ -49,7 +51,7 @@ export class TodoListComponent implements OnInit {
    * @param title 
    * @returns 
    */
-  editingToDo(todo: Todo, title:string): void{
+    editingToDo(todo: Todo, title:string): void{
     if (!todo.getEditMode){
       return;
     }
@@ -74,7 +76,56 @@ export class TodoListComponent implements OnInit {
   }
 
   getList(): Todo[] {
+
+    let list: Todo[] = [];
+    switch(this.status){
+      case TodoStatusType.All :
+        list = this._serviceTodoList.getList();
+        break;      
+      case TodoStatusType.Active :
+        list = this.getRemainingList();
+        break;
+      case TodoStatusType.Completed :
+        list = this.getCompletedList();
+        break;
+    }
+
+    return list;
+  }
+
+  getRemainingList(): Todo[]{
+    return this._serviceTodoList.getWithCompleted(false)
+  }
+
+  getCompletedList(): Todo[] {
+    return this._serviceTodoList.getWithCompleted(true);
+  }
+
+  removeCompleted(): void{
+    this._serviceTodoList.removeCompleted();
+  }
+
+  setStatus(status: number): void{
+    this.status = status
+  }
+
+  checkStatus(status: number): boolean{
+    return this.status === status;
+  }
+
+  getListWithoutStatus():Todo[]{
     return this._serviceTodoList.getList();
   }
 
+  /**
+   * 所有項目是否皆已經完成
+   * @returns 
+   */
+  allCompleted(): boolean{
+    return this.getListWithoutStatus().length === this.getCompletedList().length
+  }
+
+  setAllTo(completed: boolean): void{
+    this.getListWithoutStatus().forEach(c => c.IsComplete = completed);
+  }
 }
