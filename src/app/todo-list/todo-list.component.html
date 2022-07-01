@@ -1,0 +1,54 @@
+<section class="todoapp">
+
+    <header class="header">
+      <h1>todo1</h1>
+      <input
+        class="new-todo"
+        placeholder="What needs to be done?"
+        autofocus
+        (keyup.enter)="addTodo($event.target)"
+      >
+    </header>
+
+
+
+
+  <!-- 清單區域開始 -->
+  <section class="main" *ngIf="getList().length > 0">
+
+    <ul class="todo-list">
+      <li *ngFor = "let todo_item of getList(); let idx = index"
+        [class.completed]="todo_item.IsComplete"
+        [class.editing]="todo_item.getEditMode"
+      >
+        <div class="view">
+          <input 
+            class="toggle" 
+            type="checkbox"
+            (click)="todo_item.toggleIsCompleted()"
+            [checked]="todo_item.IsComplete"
+            >
+          <label (dblclick) = "editToDo(todo_item)">{{idx}}-{{todo_item.Title}}</label>
+          <button 
+          class="destroy"
+          (click)="removeToDo(idx)"
+          ></button>
+        </div>
+
+        <input
+            class="edit"
+            #editedtodo
+            *ngIf="todo_item.getEditMode"
+            [value]="todo_item.Title"
+            (blur)="editingToDo(todo_item, editedtodo.value)"
+            (keyup.enter)="editingToDo(todo_item, editedtodo.value)"
+            (keyup.escape)="cancelEditingToDo(todo_item)"
+        >
+
+      </li>
+    </ul>
+
+  </section>
+  <!-- 清單區域結束 -->    
+  
+  </section>
