@@ -28,4 +28,8 @@ export class TodoListService {
   getList(): Todo[]{
     return this.list;
   }
+
+  getWithCompleted(): Todo[]{
+    return this.list.filter(c => c.IsComplete === true)
+  }
 }
